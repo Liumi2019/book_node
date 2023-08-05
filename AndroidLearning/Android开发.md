@@ -96,6 +96,41 @@ Google在Android N就引入了Soong，目的是替换make。但是，很遗憾�
 1. https://www.jianshu.com/p/f69d1c381182
 2. [Soong 构建系统 —— Android 官网](https://source.android.com/docs/setup/build?hl=zh-cn)
 
+## AndroidManifest.xml 文件
+每一个 app 都应该包含一个 AndroidManifest.xml 文件，是 app 的配置信息。配置信息如下：
+1. 提供 app 包名，在 android 系统里为一个标识
+2. 为主件提供信息，配置启动、响应方式等
+3. 配置 app 可访问的权限信息
+4. 配置 app 的版本号信息
+
+### 文件结构
+1. \<manifest\> 元素
+这是文件的根节点。它必须要包含\<application\>元素，并且指明 xmlns:android 和 package 属性。
+
+2. xmlns:android
+这个属性定义了Android命名空间。必须设置成"http://schemas.android.com/apk/res/android"。不要手动修改。
+
+3. package
+这是一个完整的Java语言风格包名。包名由英文字母（大小写均可）、数字和下划线组成。每个独立的名字必须以字母开头。
+构建APK的时候，构建系统使用这个属性来做两件事：
+3.1 生成 R.java 类时用这个名字作为命名空间（用于访问APP的资源）比如：package 被设置成 com.sample.teapot，那么生成的R类就是：com.sample.teapot.R
+3.2 用来生成在manifest文件中定义的类的完整类名。比如package被设置成com.sample.teapot，并且activity元素被声明成 \<activity android:name=".MainActivity"\>，完整的类名就是 com.sample.teapot.MainActivity。包名也代表着唯一的application ID，用来发布应用。但是，要注意的一点是：在APK构建过程的最后一步，package 名会被 build.gradle 文件中的 applicationId 属性取代。如果这两个属性值一样，那么万事大吉，如果不一样，那就要小心了。
+
+4. android:versionCode
+内部的版本号。用来表明哪个版本更新。这个数字不会显示给用户。显示给用户的是versionName。这个数字必须是整数。不能用16进制，也就是说不接受"0x1"这种参数
+
+5. android:versionName
+显示给用户看的版本号。
+
+6. \<uses-feature\> 元素
+Google Play利用这个元素的值从不符合应用需要的设备上将应用过滤。这东西的作用是将APP所依赖的硬件或者软件条件告诉别人。它说明了APP的哪些功能可以随设备的变化而变化。使用的时候要注意，必须在单独的 \<uses-feature\> 元素中指定每个功能，如果要多个功能，需要多个 \<uses-feture\> 元素。
+
+7. \<application\> 元素
+此元素描述了应用的配置。这是一个必备的元素，它包含了很多子元素来描述应用的组件，它的属性影响到所有的子组件。许多属性（例如icon、label、permission、process、taskAffinity和allowTaskReparenting）都可以设置成默认值。
+
+8. \<activity\> 元素
+该元素声明一个实现应用可视化界面的Activity（Activity类子类）。这是 \<application\> 元素中必要的子元素。所有Activity都必须由清单文件中的 \<activity\> 元素表示。任何未在该处声明的Activity对系统都不可见，并且永远不会被执行。
+
 ## Android 测试
 
 1. 在 Android Studio 中测试
